@@ -1,12 +1,16 @@
-# PASCAL in Detail API
+## Detail-API Fork
+
+My fork of the Pascal Detail-API, feel free to use. See original README below:
+
+### PASCAL in Detail API
 
 MATLAB and Python API for the [PASCAL in Detail](https://sites.google.com/view/pasd/dataset) multi-task computer vision challenge. This API is a fork of [MS COCO vision challenge API](https://github.com/pdollar/coco).
 
-## To install:
+### To install:
   - For MATLAB, add detail-api/MatlabApi to the Matlab path (OSX/Linux binaries provided)
   - For Python, run "make" and "make install" under detail-api/PythonAPI
 
-## To see a demo:
+### To see a demo:
 
 For **Instance Segmentation and Part Segmentation** tasks, please refer to these demos
   - For MATLAB, run detail-api/MatlabApi/detailPartDemo.m.
