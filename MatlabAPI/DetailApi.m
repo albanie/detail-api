@@ -60,8 +60,60 @@ classdef DetailApi
       fprintf('Loading and preparing annotations... '); clk=clock;
       if(isstruct(annFile)), detail.data=annFile; else
         detail.data=gason(fileread(annFile)); end
+
+      % -----------------------------------------------------------------------
+      %                                                              sam::patch
+      % -----------------------------------------------------------------------
+      % NOTE: 
+      % ------
+      % A patch has been made to this API to enable it to interact
+      % with the json format used by the Pascal In Detail Challenge organisers
+      % for the `trainval_merged.json` file
+
+      [~,name] = fileparts(annFile) ;
+      if strcmp(name, 'trainval_merged') % first modification
+        % (1) construct images data structure to conform to interface
+        images(numel(detail.data.images)).id = [] ; % preallocate
+        for ii = 1:numel(detail.data.images)
+          imStruct = detail.data.images{ii} ; 
+          fNames = fieldnames(imStruct) ;
+          for ff = 1:numel(fNames) ;
+            orig = fNames{ff} ; newName = orig ;
+            if strcmp(orig, 'image_id'), newName = 'id' ; end % fix interface
+            images(ii).(newName) = imStruct.(orig) ;
+          end
+        end
+        detail.data.images = images ;
+
+        % (2) construct annotations data structure to conform to interface
+        annotations(numel(detail.data.annos_segmentation)).id = [] ; % preallocate
+        for ii = 1:numel(detail.data.annos_segmentation)
+          annoStruct = detail.data.annos_segmentation{ii} ; 
+          fNames = fieldnames(annoStruct) ;
+          for ff = 1:numel(fNames) ;
+            annotations(ii).(fNames{ff}) = annoStruct.(fNames{ff}) ;
+          end
+        end
+        detail.data.annotations = annotations ;
+
+        % (3) construct categories data structure to conform to interface
+        categories(numel(detail.data.categories)).id = [] ; % preallocate
+        for ii = 1:numel(detail.data.categories)
+          catStruct = detail.data.categories{ii} ; 
+          fNames = fieldnames(catStruct) ;
+          for ff = 1:numel(fNames) ;
+            orig = fNames{ff} ; newName = orig ;
+            if strcmp(orig, 'category_id'), newName = 'id' ; end % fix interface
+            categories(ii).(newName) = catStruct.(orig) ;
+          end
+        end
+        detail.data.categories = categories ;
+      end
+      % -----------------------------------------------------------------------
+
       is.imgIds = [detail.data.images.id]';
       is.imgIdsMap = makeMap(is.imgIds);
+       
       if( isfield(detail.data,'annotations') )
         ann=detail.data.annotations; o=[ann.image_id];
         if(isfield(ann,'category_id')), o=o*1e10+[ann.category_id]; end
